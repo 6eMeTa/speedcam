@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="auth-body">
+  <div class="auth-container">
+    <h1>Register</h1>
+
+    <form action="/register" method="post" class="auth-form">
+      <label>Email</label>
+      <input type="email" name="email" required />
+
+      <label>Password</label>
+      <input type="password" name="password" required minlength="6" />
+
+      <button type="submit">Create account</button>
+    </form>
+
+    <p class="auth-switch">
+      Already have an account?
+      <a href="/login">Login</a>
+    </p>
+  </div>
+</body>
+</html>

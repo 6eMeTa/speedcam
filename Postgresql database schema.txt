@@ -1,0 +1,40 @@
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(30) UNIQUE NOT NULL,
+    password VARCHAR(256) NOT NULL,
+    email CARCHAR(100) UNIQUE NOT NULL,
+    isAdmin BOOLEAN NOT NULL DEFAULT FALSE,
+    subscribed BOOLEAN NOT NULL DEFAULT FALSE,
+    map_loads INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS cameras (
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    lat DOUBLE PRECISION NOT NULL,
+    lng DOUBLE PRECISION NOT NULL,
+);
+
+CREATE TABLE IF NOT EXISTS segments (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    start_camera_id INTEGER REFERENCES cameras(id),
+    end_camera_id INTEGER REFERENCES cameras(id),
+    distance_m DOUBLE PRECISION NOT NULL,
+    duration_s DOUBLE PRECISION NOT NULL,
+    avg_speed_kmh DOUBLE PRECISION NOT NULL,
+    started_at TIMESTAMPTZ NOT NULL,
+    ended_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+/// Test cameras ///
+INSERT INTO cameras (name, lat, lng) VALUES
+('Test Camera 1', 42.6977, 23.3219),
+('Test Camera 2', 42.7040, 23.3200)
+ON CONFLICT DO NOTHING;
+
+/// create db on server ///
+createdb speedcam_db
+psql speedcam_db -f sql/schemas.sql

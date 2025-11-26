@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Drive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="drive-body">
+  <div id="map"></div>
+
+  <div class="hud">
+    <div class="hud-row">
+      <div class="hud-box">
+        <div class="hud-label">Current speed</div>
+        <div class="hud-value" id="currentSpeed">0</div>
+        <div class="hud-unit">km/h</div>
+      </div>
+
+      <div class="hud-box">
+        <div class="hud-label">Average speed</div>
+        <div class="hud-value" id="avgSpeed">-</div>
+        <div class="hud-unit">km/h</div>
+      </div>
+    </div>
+
+    <div class="hud-row">
+      <div class="hud-box status-box">
+        <div class="hud-label">Status</div>
+        <div class="hud-status" id="statusText">Waiting for GPS...</div>
+        <div class="hud-status-small" id="cameraText">No cameras yet</div>
+      </div>
+    </div>
+  </div>
+
+  <form class="logout-form" action="/logout" method="post">
+    <button type="submit">Logout</button>
+  </form>
+
+  <script>
+    // Global variables for Google Maps callback
+    const MAPS_API_KEY = "<%= mapsApiKey %>";
+  </script>
+  <script src="/js/drive.js"></script>
+  <script async
+    src="https://maps.googleapis.com/maps/api/js?key=<%= mapsApiKey %>&libraries=geometry&callback=initMap">
+  </script>
+</body>
+</html>

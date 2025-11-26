@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="auth-body">
+  <div class="auth-container">
+    <h1>Login</h1>
+
+    <form action="/login" method="post" class="auth-form">
+      <label>Email</label>
+      <input type="email" name="email" required />
+
+      <label>Password</label>
+      <input type="password" name="password" required />
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="auth-alt">
+      <p>Or continue with:</p>
+      <a class="btn-social google" href="/auth/google">Google</a>
+      <!-- Add Apple link when backend is ready -->
+      <!-- <a class="btn-social apple" href="/auth/apple">Apple</a> -->
+    </div>
+
+    <p class="auth-switch">
+      Don't have an account?
+      <a href="/register">Register</a>
+    </p>
+  </div>
+</body>
+</html>
