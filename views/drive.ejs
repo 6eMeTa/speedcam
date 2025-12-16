@@ -7,7 +7,11 @@
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body class="drive-body">
-  <div id="map"></div>
+  <div id="map-container">
+    <div id="map"></div>
+  </div>
+
+
 
   <div class="hud">
     <div class="hud-row">
@@ -16,14 +20,12 @@
         <div class="hud-value" id="currentSpeed">0</div>
         <div class="hud-unit">km/h</div>
       </div>
-
       <div class="hud-box">
         <div class="hud-label">Average speed</div>
         <div class="hud-value" id="avgSpeed">-</div>
         <div class="hud-unit">km/h</div>
       </div>
     </div>
-
     <div class="hud-row">
       <div class="hud-box status-box">
         <div class="hud-label">Status</div>
@@ -33,17 +35,105 @@
     </div>
   </div>
 
-  <form class="logout-form" action="/logout" method="post">
-    <button type="submit">Logout</button>
-  </form>
+  <!-- BUTTONS -->
+<button id="burgerBtn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false" class="burger-btn">
+  <span aria-hidden="true">☰</span>
+</button>
+<button id="recenterBtn" class="recenter-btn" title="Recenter Map">⌖</button>
+<button id="radioBtn" class="radio-btn hidden" title="Toggle Radio">🎙️</button>
+
+
+  <aside id="sidebar" class="sidebar" role="complementary" aria-label="Settings" aria-hidden="true">
+  <div class="sidebar-content">
+    <h3>Settings</h3>
+    <div class="theme-row">
+      <label class="switch">
+        <input type="checkbox" id="themeToggle" aria-label="Toggle dark theme">
+        <span class="slider"></span>
+      </label>
+      <span id="themeLabel" class="theme-label">Light</span>
+    </div>
+    <div class="theme-row">
+      <label class="switch">
+        <input type="checkbox" id="radioToggle" aria-label="Toggle radio">
+        <span class="slider"></span>
+      </label>
+      <span class="theme-label">Radio</span>
+    </div>
+
+        <!-- HISTORY LINK -->
+    <a href="/history" class="sidebar-nav-link">
+      📊 History
+    </a>
+    
+    <!-- LOGOUT BUTTON -->
+    <form class="logout-form" action="/logout" method="post">
+      <% if (user && user.acc_type === 2) { %>
+        <!-- ADMIN BUTTON (only for admins) -->
+        <a href="/admin/dashboard" class="sidebar-nav-link admin-link" style="margin-bottom: 12px; display: block;">
+          ⚙️ Admin
+        </a>
+      <% } %>
+      <button type="submit">Logout</button>
+    </form>
+
+
+  </div>
+</aside>
+
+  
+  <div id="sidebarOverlay" class="overlay" aria-hidden="true"></div>
+
+
+  <!-- WARNING MODAL (centered between HUD and top of screen) -->
+  <div id="warningModal" class="warning-modal hidden">
+    <div class="modal-content">
+      <div class="modal-icon">Warning</div>
+      <h2 id="modalCameraName">Приближавате камера</h2>
+      <p class="modal-limit">Лимит: <strong id="modalLimitValue">--</strong> km/h</p>
+
+
+
+      <div class="modal-footer">
+        <div id="countdown">Затваря се след <span id="countdownSeconds">15</span> сек</div>
+        <button id="closeModalBtn">Затвори</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Dark overlay -->
+  <div id="modalOverlay" class="modal-overlay hidden"></div>
+
+
 
   <script>
-    // Global variables for Google Maps callback
-    const MAPS_API_KEY = "<%= mapsApiKey %>";
-  </script>
+  (g => {
+    var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window;
+    b = b[c] || (b[c] = {});
+    var d = b.maps || (b.maps = {}), r = new Set(), e = new URLSearchParams(), u = () => h || (h = new Promise(async (f, n) => {
+      await (a = m.createElement("script"));
+      e.set("libraries", [...r] + "");
+      for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t.toLowerCase()), g[k]);
+      e.set("callback", c + ".maps." + q);
+      a.src = `https://maps.${c}apis.com/maps/api/js?` + e;
+      d[q] = f;
+      a.onerror = () => h = n(Error(p + " could not load."));
+      a.nonce = m.querySelector("script[nonce]")?.nonce || "";
+      m.head.append(a);
+    }));
+    d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n));
+  })({
+    key: "<%= mapsApiKey %>",
+    v: "weekly",
+    libraries: "geometry"
+  });
+</script>
+
+
   <script src="/js/drive.js"></script>
-  <script async
-    src="https://maps.googleapis.com/maps/api/js?key=<%= mapsApiKey %>&libraries=geometry&callback=initMap">
-  </script>
+
+
 </body>
 </html>

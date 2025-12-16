@@ -1,0 +1,66 @@
+-- Enable UUID generation (if not already enabled)
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+-- or, on newer Postgres, gen_random_uuid is often available by default. [web:122][web:128][web:131]
+
+-- USERS: local + social auth
+CREATE TABLE users (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email           TEXT UNIQUE,                 -- use citext if you have it, or TEXT
+  password_hash   TEXT,                          -- null for pure social accounts
+  google_id       TEXT UNIQUE,
+  apple_id        TEXT UNIQUE,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- VISITS: when user opens the site
+CREATE TABLE visits (
+  id          BIGSERIAL PRIMARY KEY,
+  user_id     UUID REFERENCES users(id) ON DELETE SET NULL,
+  opened_at   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  path        TEXT NOT NULL,
+  user_agent  TEXT
+);
+
+CREATE INDEX idx_visits_user_id ON visits(user_id);
+CREATE INDEX idx_visits_opened_at ON visits(opened_at);
+
+-- SPEED CAMERAS: coordinates and optional speed limit
+CREATE TABLE speed_cameras (
+  id          BIGSERIAL PRIMARY KEY,
+  name        TEXT NOT NULL,
+  latitude    NUMERIC(9,6) NOT NULL,   -- e.g. 42.697708, 6 decimals is usually enough [web:121]
+  longitude   NUMERIC(9,6) NOT NULL,
+  limit_kmh   INTEGER,
+  is_active   BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_speed_cameras_active ON speed_cameras(is_active);
+
+-- SEGMENTS: average speed between two cameras, one record per pass
+CREATE TABLE segments (
+  id                   BIGSERIAL PRIMARY KEY,
+  user_id              UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  first_camera_id      BIGINT NOT NULL REFERENCES speed_cameras(id),
+  second_camera_id     BIGINT NOT NULL REFERENCES speed_cameras(id),
+  first_camera_name    TEXT NOT NULL,
+  second_camera_name   TEXT NOT NULL,
+  distance_m           NUMERIC(10,2),           -- optional, meters between cams
+  avg_speed_kmh        NUMERIC(6,2) NOT NULL,   -- average speed
+  started_at           TIMESTAMPTZ NOT NULL,    -- time of passing first camera
+  finished_at          TIMESTAMPTZ NOT NULL,    -- time of passing second camera
+  created_at           TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_segments_user_id ON segments(user_id);
+CREATE INDEX idx_segments_started_at ON segments(started_at);
+CREATE INDEX idx_segments_finished_at ON segments(finished_at);
+
+-- SESSION TABLE for connect-pg-simple
+CREATE TABLE "session" (
+  sid     VARCHAR NOT NULL PRIMARY KEY,
+  sess    JSON NOT NULL,
+  expire  TIMESTAMPTZ NOT NULL
+);
+
+CREATE INDEX idx_session_expire ON "session"(expire);

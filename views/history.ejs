@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>History</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/history.css" />
+</head>
+<body class="history-body">
+  <!-- BURGER BUTTON -->
+  <button id="burgerBtn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false" class="burger-btn">
+    <span aria-hidden="true">☰</span>
+  </button>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="sidebar" role="complementary" aria-label="Navigation" aria-hidden="true">
+    <div class="sidebar-content">
+      <h3>Menu</h3>
+      
+      <a href="/drive" class="sidebar-link">
+        <span>🗺️</span> Drive
+      </a>
+      
+      <a href="/history" class="sidebar-link active">
+        <span>📊</span> History
+      </a>
+
+      <!-- LOGOUT BUTTON -->
+      <form class="logout-form" action="/logout" method="post">
+        <button type="submit">Logout</button>
+      </form>
+    </div>
+  </aside>
+
+  <div id="sidebarOverlay" class="overlay" aria-hidden="true"></div>
+
+  <!-- MAIN CONTENT -->
+  <div class="history-container">
+    <h1>Speed Segments History</h1>
+
+    <% if (segments && segments.length > 0) { %>
+      <div class="table-wrapper">
+        <table class="segments-table">
+          <thead>
+            <tr>
+              <th>From</th>
+              <th>To</th>
+              <th>Speed (km/h)</th>
+              <th>Date & Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% segments.forEach(segment => { %>
+              <tr>
+                <td><%= segment.first_camera_name %></td>
+                <td><%= segment.second_camera_name %></td>
+                <td class="speed-cell <%= segment.average_speed_kmh > 60 ? 'high-speed' : '' %>">
+                  <%= Math.round(segment.average_speed_kmh) %>
+                </td>
+                <td>
+                  <%= new Date(segment.finished_at).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  }) %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p>No segments recorded yet.</p>
+        <a href="/drive" class="btn-primary">Start Recording</a>
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const burgerBtn = document.getElementById('burgerBtn');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+      if (burgerBtn && sidebar && sidebarOverlay) {
+        burgerBtn.addEventListener('click', () => {
+          sidebar.classList.add('open');
+          sidebarOverlay.classList.add('show');
+          burgerBtn.setAttribute('aria-expanded', 'true');
+          sidebar.setAttribute('aria-hidden', 'false');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+          sidebar.classList.remove('open');
+          sidebarOverlay.classList.remove('show');
+          burgerBtn.setAttribute('aria-expanded', 'false');
+          sidebar.setAttribute('aria-hidden', 'true');
+        });
+
+        // Close sidebar when clicking a link
+        const links = sidebar.querySelectorAll('a');
+        links.forEach(link => {
+          link.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('show');
+            burgerBtn.setAttribute('aria-expanded', 'false');
+            sidebar.setAttribute('aria-hidden', 'true');
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

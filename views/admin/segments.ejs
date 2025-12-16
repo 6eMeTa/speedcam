@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Segments Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body class="segments-body">
+  <!-- BURGER BUTTON -->
+  <button id="burgerBtn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false" class="burger-btn">
+    <span aria-hidden="true">☰</span>
+  </button>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="sidebar" role="complementary" aria-label="Navigation" aria-hidden="true">
+    <div class="sidebar-content">
+      <h3>Admin Menu</h3>
+      
+      <a href="/drive" class="sidebar-link">
+        <span>🗺️</span> Drive
+      </a>
+      
+      <a href="/admin/dashboard" class="sidebar-link">
+        <span>📊</span> Dashboard
+      </a>
+
+      <a href="/admin/segments" class="sidebar-link active">
+        <span>🎥</span> Segments
+      </a>
+
+      <!-- LOGOUT BUTTON -->
+      <form class="logout-form" action="/logout" method="post">
+        <button type="submit">Logout</button>
+      </form>
+    </div>
+  </aside>
+
+  <div id="sidebarOverlay" class="overlay" aria-hidden="true"></div>
+
+  <!-- MAIN CONTENT -->
+  <div class="admin-container">
+    <h1>Segments Management</h1>
+
+    <!-- CAMERAS SECTION -->
+    <div class="management-section">
+      <h2>Speed Cameras</h2>
+      
+      <button id="addCameraBtn" class="btn-add">+ Add Camera</button>
+
+      <div id="camerasTableContainer" class="table-wrapper">
+        <table class="management-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+              <th>Speed Limit</th>
+              <th>Active</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="camerasTableBody">
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SEGMENTS SECTION -->
+    <div class="management-section">
+      <h2>Official Segments</h2>
+      
+      <button id="addSegmentBtn" class="btn-add">+ Add Segment</button>
+
+      <div id="segmentsTableContainer" class="table-wrapper">
+        <table class="management-table">
+          <thead>
+            <tr>
+              <th>From</th>
+              <th>To</th>
+              <th>Speed Limit</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="segmentsTableBody">
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAMERA MODAL -->
+  <div id="cameraModal" class="modal hidden">
+    <div class="modal-overlay" id="cameraModalOverlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="cameraModalTitle">Add Camera</h3>
+        <button class="modal-close" id="closeCameraModal">&times;</button>
+      </div>
+      
+      <form id="cameraForm">
+        <div class="form-group">
+          <label for="cameraName">Camera Name *</label>
+          <input type="text" id="cameraName" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cameraLatitude">Latitude *</label>
+            <input type="number" id="cameraLatitude" step="0.000001" required>
+          </div>
+          <div class="form-group">
+            <label for="cameraLongitude">Longitude *</label>
+            <input type="number" id="cameraLongitude" step="0.000001" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cameraLimitKmh">Speed Limit (km/h) *</label>
+          <input type="number" id="cameraLimitKmh" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cameraDetectionRadius">Detection Radius (m)</label>
+            <input type="number" id="cameraDetectionRadius" value="60">
+          </div>
+          <div class="form-group">
+            <label for="cameraWarningRadius">Warning Radius (m)</label>
+            <input type="number" id="cameraWarningRadius" value="350">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="cameraIsActive">
+            Active
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">Save Camera</button>
+          <button type="button" class="btn-cancel" id="cancelCameraBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SEGMENT MODAL -->
+  <div id="segmentModal" class="modal hidden">
+    <div class="modal-overlay" id="segmentModalOverlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="segmentModalTitle">Add Segment</h3>
+        <button class="modal-close" id="closeSegmentModal">&times;</button>
+      </div>
+      
+      <form id="segmentForm">
+        <div class="form-group">
+          <label for="segmentFirstCamera">First Camera *</label>
+          <select id="segmentFirstCamera" required>
+            <option value="">-- Select Camera --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="segmentSecondCamera">Second Camera *</label>
+          <select id="segmentSecondCamera" required>
+            <option value="">-- Select Camera --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="segmentSpeedLimit">Speed Limit (km/h) *</label>
+          <input type="number" id="segmentSpeedLimit" required>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">Save Segment</button>
+          <button type="button" class="btn-cancel" id="cancelSegmentBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/admin-segments.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const burgerBtn = document.getElementById('burgerBtn');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+      if (burgerBtn && sidebar && sidebarOverlay) {
+        burgerBtn.addEventListener('click', () => {
+          sidebar.classList.add('open');
+          sidebarOverlay.classList.add('show');
+          burgerBtn.setAttribute('aria-expanded', 'true');
+          sidebar.setAttribute('aria-hidden', 'false');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+          sidebar.classList.remove('open');
+          sidebarOverlay.classList.remove('show');
+          burgerBtn.setAttribute('aria-expanded', 'false');
+          sidebar.setAttribute('aria-hidden', 'true');
+        });
+
+        const links = sidebar.querySelectorAll('a');
+        links.forEach(link => {
+          link.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('show');
+            burgerBtn.setAttribute('aria-expanded', 'false');
+            sidebar.setAttribute('aria-hidden', 'true');
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

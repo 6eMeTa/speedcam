@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body class="dashboard-body">
+  <!-- BURGER BUTTON -->
+  <button id="burgerBtn" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false" class="burger-btn">
+    <span aria-hidden="true">☰</span>
+  </button>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="sidebar" role="complementary" aria-label="Navigation" aria-hidden="true">
+    <div class="sidebar-content">
+      <h3>Admin Menu</h3>
+      
+      <a href="/drive" class="sidebar-link">
+        <span>🗺️</span> Drive
+      </a>
+      
+      <a href="/admin/dashboard" class="sidebar-link active">
+        <span>📊</span> Dashboard
+      </a>
+
+      <a href="/admin/segments" class="sidebar-link">
+        <span>🎥</span> Segments
+      </a>
+
+      <!-- LOGOUT BUTTON -->
+      <form class="logout-form" action="/logout" method="post">
+        <button type="submit">Logout</button>
+      </form>
+    </div>
+  </aside>
+
+  <div id="sidebarOverlay" class="overlay" aria-hidden="true"></div>
+
+  <!-- MAIN CONTENT -->
+  <div class="dashboard-container">
+    <h1>Admin Dashboard</h1>
+
+    <% if (error) { %>
+      <div class="error-message"><%= error %></div>
+    <% } %>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-label">Total Users</div>
+        <div class="stat-value"><%= stats.totalUsers || 0 %></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-label">Paid Users</div>
+        <div class="stat-value"><%= stats.paidUsers || 0 %></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🆓</div>
+        <div class="stat-label">Free Users</div>
+        <div class="stat-value"><%= stats.freeUsers || 0 %></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-label">Total Segments</div>
+        <div class="stat-value"><%= stats.totalSegments || 0 %></div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🎥</div>
+        <div class="stat-label">Total Cameras</div>
+        <div class="stat-value"><%= stats.totalCameras || 0 %></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const burgerBtn = document.getElementById('burgerBtn');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+      if (burgerBtn && sidebar && sidebarOverlay) {
+        burgerBtn.addEventListener('click', () => {
+          sidebar.classList.add('open');
+          sidebarOverlay.classList.add('show');
+          burgerBtn.setAttribute('aria-expanded', 'true');
+          sidebar.setAttribute('aria-hidden', 'false');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+          sidebar.classList.remove('open');
+          sidebarOverlay.classList.remove('show');
+          burgerBtn.setAttribute('aria-expanded', 'false');
+          sidebar.setAttribute('aria-hidden', 'true');
+        });
+
+        // Close sidebar when clicking a link
+        const links = sidebar.querySelectorAll('a');
+        links.forEach(link => {
+          link.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('show');
+            burgerBtn.setAttribute('aria-expanded', 'false');
+            sidebar.setAttribute('aria-hidden', 'true');
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
